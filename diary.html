@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Diary</title>
+  <link rel="stylesheet" href="diarystyle.css">
+</head>
+<body>
+  <h1>🌼 My Personal Diary</h1>
+  <textarea id="entry" placeholder="Write your thoughts here..."></textarea>
+  <button onclick="saveEntry()">Save Entry</button>
+  <div id="entries"></div>
+
+  <script>
+    function saveEntry() {
+      const text = document.getElementById("entry").value.trim();
+      if (!text) return;
+      const timestamp = new Date().toLocaleString();
+      const entry = { timestamp, text };
+      let diary = JSON.parse(localStorage.getItem("diary")) || [];
+      diary.unshift(entry);
+      localStorage.setItem("diary", JSON.stringify(diary));
+      document.getElementById("entry").value = "";
+      renderEntries();
+    }
+
+    function deleteEntry(index) {
+      let diary = JSON.parse(localStorage.getItem("diary")) || [];
+      diary.splice(index, 1);
+      localStorage.setItem("diary", JSON.stringify(diary));
+      renderEntries();
+    }
+
+    function renderEntries() {
+      const container = document.getElementById("entries");
+      const diary = JSON.parse(localStorage.getItem("diary")) || [];
+      container.innerHTML = diary.map((entry, i) => `
+        <div class="entry">
+          <div class="timestamp">${entry.timestamp}</div>
+          <p>${entry.text}</p>
+          <button onclick="deleteEntry(${i})">Delete</button>
+        </div>
+      `).join("");
+    }
+
+    renderEntries();
+  </script>
+</body>
+</html>
